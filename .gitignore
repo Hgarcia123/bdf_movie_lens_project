@@ -1,3 +1,8 @@
+#Only preserve data directories
 data/**
 !data/**/
 !data/**/.gitkeep
+
+#Only preserve query_results_csv directory
+query_results_csv/**
+!query_results_csv/.gitkeep
