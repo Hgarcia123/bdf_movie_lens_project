@@ -8,5 +8,26 @@
 
 # Potential storylines/features
 
-## Verify year of rating vs year of release. Volume and average of ratings per year
-This is interesting in order to check the number of ratings in other years than it's release. Some movies might get more popular in later years.
+## Volume and Average of Ratings per Year
+This is interesting in order to check the number of ratings in other years vs it's year of release. Some movies might get more popular in later years.
+
+### Results verified
+
+**Volume**  
+The disitribution of ratings per year seems to be biased. What is expected is a constant evolution of ratings without much variation between years, so there's a chance there's an external factor coming into play in this data. Eg: Data imports performed on the following years: 1996 (First year of data), 2000, 2005, 2015, 2016
+
+<img src="image.png" width="700"/>
+
+
+We can verify the same happens for the top 5 films with most ratings, verifying that performing an analysis in terms of volume is irrelevant
+
+<img src="image-1.png" width="700"/>
+
+**Average**
+
+
+
+### Popular and well-rated are different things.
+
+Independence Day (3.39) and Batman (1989, 3.43) have had over 50k ratings each across 28 years. They are the lowest-rated of the heavily rated films, and still very popular.
+Jurassic Park, Aladdin, Shrek, The Lion King and Toy Story all sit around 3.7-3.9, which is good but well below the top group.
