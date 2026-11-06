@@ -6,6 +6,10 @@
 - convert 'rating' to int
 - convert 'timestamp' from unix to date/string type 
 
+## Willhelm Scream
+
+- For imdbId column, remove first 2 characters in order to join with movies table
+
 # Potential storylines/features
 
 ## Volume and Average of Ratings per Year

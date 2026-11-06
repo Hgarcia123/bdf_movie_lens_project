@@ -82,4 +82,4 @@ To convert all csv files inside `data/csv` directory, execute this command on th
 ## Execute .sql file
 To execute all queries in the `movie_lens_analysis_queries.sql` (or any other .sql file), execute this command
 
-`duckdb < movie_lens_support_tables.sql`
+`duckdb < movie_lens_analysis_queries.sql`
