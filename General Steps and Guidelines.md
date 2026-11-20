@@ -33,3 +33,16 @@ Popular and well-rated are different things.
 Independence Day, 3.39 rating, and Batman (1989), 3.43 rating, have had over 50k ratings each across 28 years. They are the lowest-rated of the heavily rated films, and still very popular.
 
 Jurassic Park, Aladdin, Shrek, The Lion King and Toy Story all sit around 3.7-3.9, which is good but well below the top group.
+
+## Wilhelm scream analysis
+
+Performed join using IMDb Id column. Checked for the total number of movies with the wilhelm scream: 766.
+
+Top 5 Genres with the wilhelm scream:
+- Comedy
+- Action
+- Adventure
+- Animation
+- Children
+
+TODO: Maybe check years where it was mostly used. Also check originial film of the Wilhelm Scream!!! (I think it was a western)
