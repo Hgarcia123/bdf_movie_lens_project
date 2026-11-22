@@ -45,4 +45,4 @@ Top 5 Genres with the wilhelm scream:
 - Animation
 - Children
 
-TODO: Maybe check years where it was mostly used. Also check originial film of the Wilhelm Scream!!! (I think it was a western)
+TODO: Maybe check years where it was mostly used. Also check original film of the Wilhelm Scream!!! (I think it was a western)

@@ -144,7 +144,7 @@ COPY(
 -- Willhelm Scream Analysis
 -- Create table with join tables of movies, links and wilhelmscream
 
-CREATE OR REPLACE TEMP TABLE t_wilhelscream_analysis AS
+CREATE OR REPLACE TEMP TABLE t_wilhelmscream_analysis AS
 WITH movies_wilhelmscream AS(
     SELECT
         a.title, 
@@ -163,20 +163,55 @@ FROM movies_wilhelmscream
 WHERE Verification <> 'Invalidated';
 
 -- Total rows
-SELECT count(*) FROM t_wilhelscream_analysis;
+SELECT count(*) FROM t_wilhelmscream_analysis;
 
 -- Average rating of films with wilhelscream
 SELECT
     AVG(imdb_rating) as avg_rating
-FROM t_wilhelscream_analysis;
+FROM t_wilhelmscream_analysis;
 
 -- Query to check the most recurring genres where th wilhelm scream appears
 
 WITH exploded_genres AS (
     SELECT title, unnest(string_split(genres, '|')) AS genre
-    FROM t_wilhelscream_analysis
+    FROM t_wilhelmscream_analysis
 )
 SELECT genre, count(*) AS movie_count
 FROM exploded_genres
 GROUP BY genre
 ORDER BY movie_count DESC;
+
+-- Query for distribution of wilhelm screams per year
+SELECT
+    yearOfRelease
+    ,count(*)
+FROM t_wilhelmscream_analysis
+GROUP BY yearOfRelease
+ORDER BY yearOfRelease ASC;
+
+-- We can see the first time it was used, according to this data, was in 1950.
+-- Let's check which movie this might be as it can be the original sample
+SELECT
+    *
+FROM t_wilhelmscream_analysis
+WHERE yearOfRelease = 1950;
+
+-- We see that the film "Kim" is the first movie to have the Wilhelm scream, but the verification column marks it as "Unclear".
+-- And performing a quick google research, the supposed original film using the Wilhelm scream was "Distant Drums (1951)".
+-- To double check this, let's perform a query where it gets the first movie
+-- ordered by yearOfRelease
+with rank_films_by_year as(
+    SELECT
+        title,
+        yearOfRelease,
+        Verification,
+        ROW_NUMBER() OVER(ORDER BY yearOfRelease ASC) as rn_appearence
+    FROM t_wilhelmscream_analysis
+    WHERE Verification <> 'Unclear'
+)
+SELECT
+    *
+FROM rank_films_by_year
+where rn_appearence = 1;
+
+-- This confirms it!
