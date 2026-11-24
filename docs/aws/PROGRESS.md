@@ -2,7 +2,7 @@
 
 *Paulo · branch `paulo_aws` · last updated 24 Nov 2026*
 
-The MovieLens 32M data now runs in AWS as well as locally: raw files in S3, a Glue job that does the cleaning (Henrique's support tables), and Athena tables that return the same numbers as DuckDB. Every row count checked so far matches the local pipeline.
+The MovieLens 32M data now runs in AWS as well as locally ([full setup guide](AWS_SETUP_GUIDE.md)): raw files in S3, a Glue job that does the cleaning (Henrique's support tables), and Athena tables that return the same numbers as DuckDB. Every row count checked so far matches the local pipeline.
 
 Account: AWS Academy Learner Lab `****6339`, region `us-east-1`, role `LabRole`. Bucket: `bdf26-movielens-6339`.
 
@@ -81,6 +81,8 @@ Found while checking the cloud numbers against the local ones. Not changed in th
 4. **`requirements.txt` has no versions.** I got duckdb 2.0.0 and pandas 3.1.1; pinning them would make the local run reproducible.
 
 ## How to reproduce
+
+**Without scripts:** [AWS_SETUP_GUIDE.md](AWS_SETUP_GUIDE.md) rebuilds everything by hand in the AWS console, step by step, and explains each piece. The commands below are the scripted way I did it.
 
 You need **your own Learner Lab credentials** (each student's AWS account is separate). Start the lab and paste the AWS CLI block into `~/.aws/credentials` yourself. Never put it in the repo or in a chat. Use a bucket name with the last 4 digits of your own account ID, and replace `bdf26-movielens-6339` in the DDL files with it.
 
