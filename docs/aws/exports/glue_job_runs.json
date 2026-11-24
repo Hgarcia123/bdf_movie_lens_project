@@ -1,0 +1,11 @@
+[
+    {
+        "Id": "jr_bb8f157801d4196e68be6c7bbaf1dc368cd7a6862b0fd58c9d1dbe1274fde678",
+        "JobRunState": "SUCCEEDED",
+        "StartedOn": "2026-11-24T01:55:52.072000+00:00",
+        "CompletedOn": "2026-11-24T01:59:12.335000+00:00",
+        "ExecutionTime": 190,
+        "DPUSeconds": 381.0,
+        "GlueVersion": "5.0"
+    }
+]

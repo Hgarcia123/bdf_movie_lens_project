@@ -1,0 +1,8 @@
+{
+    "Role":  "LabRole",
+    "GlueVersion":  "5.0",
+    "WorkerType":  "G.1X",
+    "NumberOfWorkers":  2,
+    "Timeout":  30,
+    "ScriptLocation":  "s3://bdf26-movielens-6339/scripts/glue/movielens_curate.py"
+}

@@ -1,0 +1,255 @@
+[
+    {
+        "Name": "links_csv",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/csv/links",
+        "Columns": [
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "imdbid",
+                "Type": "string"
+            },
+            {
+                "Name": "tmdbid",
+                "Type": "string"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "links_curated",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/curated/links",
+        "Columns": [
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "imdbid",
+                "Type": "string"
+            },
+            {
+                "Name": "imdb_tt",
+                "Type": "string"
+            },
+            {
+                "Name": "tmdbid",
+                "Type": "bigint"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "links_parquet",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/parquet/links",
+        "Columns": [
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "imdbid",
+                "Type": "string"
+            },
+            {
+                "Name": "tmdbid",
+                "Type": "bigint"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "movies_csv",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/csv/movies",
+        "Columns": [
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "title",
+                "Type": "string"
+            },
+            {
+                "Name": "genres",
+                "Type": "string"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "movies_curated",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/curated/movies",
+        "Columns": [
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "title",
+                "Type": "string"
+            },
+            {
+                "Name": "yearofrelease",
+                "Type": "int"
+            },
+            {
+                "Name": "genres",
+                "Type": "string"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "movies_parquet",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/parquet/movies",
+        "Columns": [
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "title",
+                "Type": "string"
+            },
+            {
+                "Name": "genres",
+                "Type": "string"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "ratings_csv",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/csv/ratings",
+        "Columns": [
+            {
+                "Name": "userid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "rating",
+                "Type": "double"
+            },
+            {
+                "Name": "timestamp",
+                "Type": "bigint"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "ratings_curated",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/curated/ratings",
+        "Columns": [
+            {
+                "Name": "userid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "rating",
+                "Type": "double"
+            },
+            {
+                "Name": "dateofrating",
+                "Type": "date"
+            }
+        ],
+        "PartitionKeys": [
+            {
+                "Name": "rating_year",
+                "Type": "int"
+            }
+        ]
+    },
+    {
+        "Name": "ratings_parquet",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/parquet/ratings",
+        "Columns": [
+            {
+                "Name": "userid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "rating",
+                "Type": "double"
+            },
+            {
+                "Name": "timestamp",
+                "Type": "bigint"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "tags_csv",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/csv/tags",
+        "Columns": [
+            {
+                "Name": "userid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "tag",
+                "Type": "string"
+            },
+            {
+                "Name": "timestamp",
+                "Type": "bigint"
+            }
+        ],
+        "PartitionKeys": []
+    },
+    {
+        "Name": "tags_parquet",
+        "TableType": "EXTERNAL_TABLE",
+        "Location": "s3://bdf26-movielens-6339/raw/parquet/tags",
+        "Columns": [
+            {
+                "Name": "userid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "movieid",
+                "Type": "bigint"
+            },
+            {
+                "Name": "tag",
+                "Type": "string"
+            },
+            {
+                "Name": "timestamp",
+                "Type": "bigint"
+            }
+        ],
+        "PartitionKeys": []
+    }
+]

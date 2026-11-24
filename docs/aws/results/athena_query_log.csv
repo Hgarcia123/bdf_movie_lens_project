@@ -1,0 +1,36 @@
+﻿timestamp,file,statement,sql_start,state,runtime_ms,bytes_scanned
+2026-11-24T00:51:18,aws/athena/ddl/00_database.sql,1,"CREATE DATABASE IF NOT EXISTS movielens COMMENT 'BDF MovieLe",SUCCEEDED,407,0
+2026-11-24T00:51:25,aws/athena/ddl/01_raw_csv.sql,1,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.ratings_csv ( ",SUCCEEDED,479,0
+2026-11-24T00:51:32,aws/athena/ddl/01_raw_csv.sql,2,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.movies_csv ( m",SUCCEEDED,398,0
+2026-11-24T00:51:38,aws/athena/ddl/01_raw_csv.sql,3,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.tags_csv ( use",SUCCEEDED,483,0
+2026-11-24T00:51:45,aws/athena/ddl/01_raw_csv.sql,4,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.links_csv ( mo",SUCCEEDED,372,0
+2026-11-24T00:51:52,aws/athena/ddl/02_raw_parquet.sql,1,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.ratings_parque",SUCCEEDED,602,0
+2026-11-24T00:51:59,aws/athena/ddl/02_raw_parquet.sql,2,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.movies_parquet",SUCCEEDED,433,0
+2026-11-24T00:52:06,aws/athena/ddl/02_raw_parquet.sql,3,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.tags_parquet (",SUCCEEDED,446,0
+2026-11-24T00:52:12,aws/athena/ddl/02_raw_parquet.sql,4,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.links_parquet ",SUCCEEDED,520,0
+2026-11-24T00:52:37,aws/athena/checks/01_row_counts.sql,1,"SELECT 'ratings_csv' AS tbl, count(*) AS row_count FROM movi",SUCCEEDED,1455,877101951
+2026-11-24T00:52:47,aws/athena/checks/01_row_counts.sql,2,"SELECT 'movies_csv' AS tbl, count(*) AS row_count FROM movie",SUCCEEDED,625,4242926
+2026-11-24T00:52:57,aws/athena/checks/01_row_counts.sql,3,"SELECT 'tags_csv' AS tbl, count(*) AS row_count FROM moviele",SUCCEEDED,1179,72355889
+2026-11-24T00:53:06,aws/athena/checks/01_row_counts.sql,4,"SELECT 'links_csv' AS tbl, count(*) AS row_count FROM moviel",SUCCEEDED,578,1950748
+2026-11-24T00:53:16,aws/athena/checks/01_row_counts.sql,5,"SELECT 'ratings_parquet' AS tbl, count(*) AS row_count FROM ",SUCCEEDED,732,0
+2026-11-24T00:53:26,aws/athena/checks/01_row_counts.sql,6,"SELECT 'movies_parquet' AS tbl, count(*) AS row_count FROM m",SUCCEEDED,595,0
+2026-11-24T00:53:36,aws/athena/checks/01_row_counts.sql,7,"SELECT 'tags_parquet' AS tbl, count(*) AS row_count FROM mov",SUCCEEDED,493,0
+2026-11-24T00:53:45,aws/athena/checks/01_row_counts.sql,8,"SELECT 'links_parquet' AS tbl, count(*) AS row_count FROM mo",SUCCEEDED,491,0
+2026-11-24T00:53:52,aws/athena/checks/02_sanity.sql,1,"SELECT 'ratings_csv' AS tbl, avg(rating) AS avg_rating, min(",START_FAILED,,
+2026-11-24T00:54:14,aws/athena/checks/02_sanity.sql,1,"SELECT 'ratings_csv' AS tbl, avg(rating) AS avg_rating, min(",SUCCEEDED,2536,877101951
+2026-11-24T00:54:23,aws/athena/checks/02_sanity.sql,2,"SELECT 'ratings_parquet' AS tbl, avg(rating) AS avg_rating, ",SUCCEEDED,1332,142126215
+2026-11-24T00:54:32,aws/athena/checks/02_sanity.sql,3,"SELECT 'links_csv' AS tbl, count_if(tmdbId IS NULL OR trim(t",SUCCEEDED,781,1950748
+2026-11-24T01:59:50,aws/athena/ddl/03_curated.sql,1,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.movies_curated",SUCCEEDED,381,0
+2026-11-24T01:59:54,aws/athena/ddl/03_curated.sql,2,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.links_curated ",SUCCEEDED,453,0
+2026-11-24T01:59:59,aws/athena/ddl/03_curated.sql,3,"CREATE EXTERNAL TABLE IF NOT EXISTS movielens.ratings_curate",SUCCEEDED,380,0
+2026-11-24T02:00:10,aws/athena/ddl/03_curated.sql,4,"MSCK REPAIR TABLE movielens.ratings_curated",SUCCEEDED,4961,0
+2026-11-24T02:00:20,aws/athena/checks/03_curated_checks.sql,1,"SELECT 'ratings_curated' AS tbl, count(*) AS row_count FROM ",SUCCEEDED,1857,0
+2026-11-24T02:00:27,aws/athena/checks/03_curated_checks.sql,2,"SELECT 'movies_curated' AS tbl, count(*) AS row_count FROM m",SUCCEEDED,624,0
+2026-11-24T02:00:33,aws/athena/checks/03_curated_checks.sql,3,"SELECT 'links_curated' AS tbl, count(*) AS row_count FROM mo",SUCCEEDED,748,0
+2026-11-24T02:00:40,aws/athena/checks/03_curated_checks.sql,4,"SHOW PARTITIONS movielens.ratings_curated",SUCCEEDED,1285,0
+2026-11-24T02:00:46,aws/athena/checks/03_curated_checks.sql,5,"SELECT count(*) AS partitions, min(rating_year) AS first_yea",SUCCEEDED,1087,232
+2026-11-24T02:00:53,aws/athena/checks/03_curated_checks.sql,6,"SELECT avg(rating) AS avg_rating, min(rating) AS min_rating,",SUCCEEDED,1271,15117777
+2026-11-24T02:00:59,aws/athena/checks/03_curated_checks.sql,7,"SELECT count_if(yearOfRelease IS NULL) AS null_yearOfRelease",SUCCEEDED,602,84013
+2026-11-24T02:01:06,aws/athena/checks/03_curated_checks.sql,8,"SELECT movieId, title FROM movielens.movies_curated WHERE ye",SUCCEEDED,501,1883012
+2026-11-24T02:01:12,aws/athena/checks/03_curated_checks.sql,9,"SELECT rating_year, count(*) AS ratings FROM movielens.ratin",SUCCEEDED,1302,0
+2026-11-24T02:18:07,aws/athena/exports/rows_per_year.sql,1,"SELECT rating_year, count(*) AS ""rows"" FROM movielens.rating",SUCCEEDED,1274,0

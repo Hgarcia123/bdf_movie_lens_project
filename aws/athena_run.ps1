@@ -10,10 +10,13 @@
     data scanned (bytes and MB), and the first rows of the result for SELECTs.
   - Appends one line per statement to scratch/athena_log.csv.
   - Stops on the first failed statement and shows the error.
+  - With -SaveCsv <path>, downloads the full result CSV of the last SELECT
+    in the file (Athena's own result file) to that path.
 
   Requires valid AWS Learner Lab credentials (they expire with the lab session).
-  Example (from the repo root):
+  Examples (from the repo root):
     .\aws\athena_run.ps1 aws\athena\ddl\01_raw_csv.sql
+    .\aws\athena_run.ps1 aws\athena\exports\rows_per_year.sql -SaveCsv docs\aws\results\rows_per_year.csv
 #>
 param(
     [Parameter(Mandatory = $true)][string]$SqlFile,
@@ -22,8 +25,10 @@ param(
     [string]$Database = "",          # optional query context; the SQL files use qualified names
     [string]$Region = "us-east-1",
     [int]$MaxRows = 10,
-    [string]$LogFile = ""
+    [string]$LogFile = "",
+    [string]$SaveCsv = ""
 )
+$lastSelectResult = $null
 
 $env:AWS_PAGER = ""
 $repo = Split-Path -Parent $PSScriptRoot
@@ -111,6 +116,7 @@ try {
 
         # First rows for SELECT / WITH queries.
         if ($sql -match '^\s*(SELECT|WITH)\b') {
+            $lastSelectResult = $qe.ResultConfiguration.OutputLocation
             $res = & $aws athena get-query-results --region $Region --query-execution-id $qid `
                      --max-items ($MaxRows + 1) --output json | Out-String | ConvertFrom-Json
             $rows = @($res.ResultSet.Rows)
@@ -139,6 +145,16 @@ try {
 }
 finally {
     if (Test-Path $tmp) { Remove-Item $tmp -Force }
+}
+if ($SaveCsv) {
+    if (-not $lastSelectResult) { Write-Host "-SaveCsv: no SELECT in this file, nothing saved." -ForegroundColor Yellow }
+    else {
+        $dir = Split-Path -Parent $SaveCsv
+        if ($dir -and -not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
+        & $aws s3 cp $lastSelectResult $SaveCsv --region $Region --only-show-errors
+        if ($LASTEXITCODE -ne 0) { Write-Host "Could not download $lastSelectResult" -ForegroundColor Red; exit 1 }
+        Write-Host "Saved result of the last SELECT to $SaveCsv"
+    }
 }
 Write-Host ""
 Write-Host "Done: $($statements.Count) statement(s) succeeded. Log: $LogFile"
