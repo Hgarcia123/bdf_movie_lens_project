@@ -26,8 +26,9 @@ The short results summary is in [PROGRESS.md](PROGRESS.md). My working notes fro
    - [Step G — Check the curated tables](#step-g--check-the-curated-tables)
 5. [Why it was built this way](#5-why-it-was-built-this-way)
 6. [The working notes in notes/](#6-the-working-notes-in-notes)
-7. [Troubleshooting](#7-troubleshooting)
-8. [Glossary](#8-glossary)
+7. [The files exported from AWS](#7-the-files-exported-from-aws)
+8. [Troubleshooting](#8-troubleshooting)
+9. [Glossary](#9-glossary)
 
 ---
 
@@ -214,7 +215,7 @@ You need:
 
    Note that in queries `timestamp` is written with **double quotes**: `"timestamp"`. Backticks only work in `CREATE TABLE` statements, and a query with backticks fails with `MALFORMED_QUERY`. (Table definitions use Hive syntax, queries use Trino syntax.)
 
-If a count is 0 or wildly off, see [Troubleshooting](#7-troubleshooting).
+If a count is 0 or wildly off, see [Troubleshooting](#8-troubleshooting).
 
 ### Step E — Create and run the Glue ETL job
 
@@ -327,16 +328,42 @@ While building this, Claude Code wrote a notes file after each step in a local `
 | [run_sql.py](notes/run_sql.py) | 0 | Small script that runs a `.sql` file with the duckdb Python package, statement by statement, timing each one (I don't have the duckdb command-line tool) | Running Henrique's SQL file with timings: `python docs/aws/notes/run_sql.py movie_lens_analysis_queries.sql` from the repo root |
 | [check_issues.py](notes/check_issues.py) | 0 | The DuckDB queries that counted the problems in the local SQL (rounded ratings, damaged titles, films merged by title) | Rechecking the "Findings for Henrique" numbers yourself |
 
-Two more files from the same work are in [results/](results/):
-
-- [athena_query_log.csv](results/athena_query_log.csv): every Athena query I ran, with time, file, state (`SUCCEEDED`, `FAILED`, `START_FAILED`), engine runtime in ms and bytes scanned. It's the raw evidence behind the tables above, including the one failed attempt (the backtick `timestamp`).
-- [dq_movielens_curate.csv](results/dq_movielens_curate.csv): the data-quality report written by the Glue job (Step E).
+The files exported from AWS itself (table definitions, job settings, query log, and so on) are explained in [section 7](#7-the-files-exported-from-aws).
 
 All numbers are from single runs. Step 6 of the plan repeats the comparisons several times and takes the median, which is what should go in the final slides.
 
 ---
 
-## 7. Troubleshooting
+## 7. The files exported from AWS
+
+My AWS account is private to me, so you can't open my bucket, tables or Glue job. These files are snapshots taken from AWS so you can see what exists there without logging in. They also work as a **reference for your own rebuild**: when you finish a step, compare what you see in your console with the matching file.
+
+They were exported with read-only AWS commands. Anything that would identify my account (the 12-digit account ID, full role ARNs) was removed or masked as `****6339`. No data files are included: the data never goes in GitHub, and anyone can rebuild it from the raw MovieLens files.
+
+### exports/ — what exists in AWS
+
+| File | What it is | How to read it | Compare with your rebuild |
+|---|---|---|---|
+| [glue_tables.json](exports/glue_tables.json) | The definitions of all **11 tables** in the `movielens` database, taken from the Glue Data Catalog | One entry per table: `Name`, `TableType` (always `EXTERNAL_TABLE`), `Location` (the S3 folder it reads), `Columns` (name and type) and `PartitionKeys` (only `ratings_curated` has one: `rating_year`). Column names appear in **lower case** (`movieid`, not `movieId`): Glue stores all names in lower case, and Athena matches them regardless of case, so queries can keep using `movieId` | After Steps C and F: your tables in Glue → Data Catalog → Tables should have the same names, columns and types, with your bucket in `Location` |
+| [glue_job.json](exports/glue_job.json) | The settings of the Glue job `bdf26-movielens-curate` | `Role` LabRole, `GlueVersion` 5.0, `WorkerType` G.1X, `NumberOfWorkers` 2, `Timeout` 30 minutes, and `ScriptLocation`, where Glue keeps its copy of the script | Step E's Job details tab: same values, except the script path has your bucket |
+| [glue_job_runs.json](exports/glue_job_runs.json) | The job's **run history** (one run so far) | `JobRunState` SUCCEEDED, `StartedOn` / `CompletedOn` (UTC), `ExecutionTime` 190 seconds, `DPUSeconds` 381 (2 workers × ~190 s), `GlueVersion`. The `Id` is just Glue's name for that run. Cost = DPU-seconds ÷ 3600 × $0.44 ≈ **$0.047** | Your run in the job's Runs tab: similar time and DPU-seconds (a few seconds either way is normal) |
+| [s3_layout.txt](exports/s3_layout.txt) | Every file in my bucket, with date, size and full path | It's the output of `aws s3 ls --recursive`, one line per file. You can see the three zones (`raw/`, `curated/`, `dq/`), the **29 `rating_year=...` folders** with one Parquet file each, and the totals at the bottom (40 files, 1,238 MiB). The long names like `part-00000-...snappy.parquet` are how Spark names its output files; `snappy` is the compression. I left out `athena-results/` (one small result file per query), `glue-temp/` (Glue's scratch space) and `scripts/` (Glue's copy of the script) | Your bucket after Step E should have the same folders and similar sizes |
+
+### results/ — what the queries and the job produced
+
+| File | What it is | How to read it | Used for |
+|---|---|---|---|
+| [athena_query_log.csv](results/athena_query_log.csv) | A log of **every Athena query I ran** (35 rows), written by my runner script | Columns: `timestamp` (when it ran), `file` (which `.sql` file), `statement` (its number in the file), `sql_start` (first 60 characters of the SQL), `state` (`SUCCEEDED`, `FAILED`, or `START_FAILED` when Athena rejected it before running), `runtime_ms` (time inside Athena, not counting network) and `bytes_scanned` (what Athena billed for). DDL statements scan 0 bytes | The raw evidence behind every runtime and data-scanned number in the notes and in PROGRESS.md, including the one failed attempt (backticks around `timestamp`) |
+| [dq_movielens_curate.csv](results/dq_movielens_curate.csv) | The **data-quality report** the Glue job writes on every run (to `dq/movielens_curate/` in S3) | Columns `table`, `metric`, `value`. Metrics: `rows_in` / `rows_out` (nothing lost), `null_yearOfRelease` (615), `null_rating`, `rating_outside_0.5_5.0`, `duplicate_userId_movieId_pairs`, `ratings_without_movie` (all 0), `null_tmdbId` (124), and `rows_year_1995` … `rows_year_2023` (ratings per year) | Proof the cleaning kept every row and the data has no duplicates or impossible values. After Step E, your own report in `dq/` should have identical values |
+| [rows_per_year.csv](results/rows_per_year.csv) | Number of ratings per rating year, 1995–2023 (29 rows), from `ratings_curated` | Columns `rating_year`, `rows`. Produced by [`aws/athena/exports/rows_per_year.sql`](../../aws/athena/exports/rows_per_year.sql). The query scanned 0 bytes: Athena answered it from the partition folders and the Parquet metadata | The yearly-volume chart, and the artificial peaks in 1996, 2000, 2005 and 2015–16 behind storyline 1. Matches DuckDB exactly |
+
+### screenshots/
+
+Screenshots of the AWS console (bucket, Glue job run, tables, an Athena query showing data scanned). They show the same things as the files above, for people who'd rather see the console than read JSON. They're listed in [PROGRESS.md](PROGRESS.md#screenshots).
+
+---
+
+## 8. Troubleshooting
 
 | Problem | Likely cause | Fix |
 |---|---|---|
@@ -354,7 +381,7 @@ All numbers are from single runs. Step 6 of the plan repeats the comparisons sev
 
 ---
 
-## 8. Glossary
+## 9. Glossary
 
 | Term | Meaning |
 |---|---|
