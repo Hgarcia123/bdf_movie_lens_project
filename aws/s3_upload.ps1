@@ -13,6 +13,7 @@
   Requires valid AWS Learner Lab credentials (they expire with the lab session).
   Run from the repo root:  .\aws\s3_upload.ps1
 #>
+
 param(
     [string]$Bucket = "bdf26-movielens-6339",
     [string]$Region = "us-east-1"
@@ -21,7 +22,7 @@ param(
 # No global "Stop": in Windows PowerShell 5.1 it turns harmless aws stderr
 # (e.g. head-bucket's 404) into terminating errors. Exit codes are checked instead.
 $env:AWS_PAGER = ""
-$tables  = @("ratings", "movies", "tags", "links")
+$tables  = @("ratings", "movies", "tags", "links", "wilhelmscreamdb-2026-11-06")
 $repo    = Split-Path -Parent $PSScriptRoot
 
 # 1. Bucket: create only if it does not exist yet.
