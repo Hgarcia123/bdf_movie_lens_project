@@ -127,6 +127,14 @@ try {
                 $table | Format-Table -AutoSize | Out-String -Width 200 | Write-Host
             }
         }
+        # SHOW / DESCRIBE results have no header row: print every row as is.
+        elseif ($sql -match '^\s*(SHOW|DESCRIBE)\b') {
+            $res = & $aws athena get-query-results --region $Region --query-execution-id $qid `
+                     --max-items $MaxRows --output json | Out-String | ConvertFrom-Json
+            $rows = @($res.ResultSet.Rows)
+            foreach ($r in $rows) { Write-Host ("  " + (@($r.Data | ForEach-Object { $_.VarCharValue }) -join "`t")) }
+            if ($res.NextToken) { Write-Host "  ... (more rows; raise -MaxRows to see them)" }
+        }
     }
 }
 finally {
