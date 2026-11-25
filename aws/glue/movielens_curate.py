@@ -9,6 +9,7 @@ curated Parquet, all with mode overwrite:
   raw/parquet/ratings/  -> curated/ratings/   userId, movieId, rating (DOUBLE, half stars kept),
                                               dateOfRating (DATE, UTC), partitioned by rating_year
   raw/parquet/links/    -> curated/links/     movieId, imdbId (STRING), imdb_tt, tmdbId
+  raw/parquet/tags/    -> curated/tags/       userId, movieId, tag, timestamp
 
 Data-quality counts are printed to the job log and written as one CSV to
 dq/movielens_curate/.
@@ -115,6 +116,44 @@ links.write.mode("overwrite").parquet(f"{curated}/links/")
 add_dq("links", "rows_in", links_raw.count())
 add_dq("links", "rows_out", spark.read.parquet(f"{curated}/links/").count())
 add_dq("links", "null_tmdbId", links.filter(F.col("tmdbId").isNull()).count())
+
+# --- tags ---------------------------------------------------------------------
+tags_raw = spark.read.parquet(f"{raw}/tags/")
+tags = tags_raw.select(
+    F.col("userId").cast("bigint").alias("userId"),
+    F.col("movieId").cast("bigint").alias("movieId"),
+    F.col("tag").cast("string").alias("tag"),
+    F.to_date(F.from_unixtime(F.col("timestamp"))).alias("dateOfTag"),
+)
+tags.write.mode("overwrite").parquet(f"{curated}/tags/")
+
+add_dq("tags", "rows_in", tags_raw.count())
+add_dq("tags", "rows_out", spark.read.parquet(f"{curated}/tags/").count())
+add_dq("tags", "null_movieId", tags.filter(F.col("movieId").isNull()).count())
+
+# --- wilhelmscream ---------------------------------------------------------------------
+wilhelmscream_raw = spark.read.parquet(f"{raw}/wilhelmScream/")
+wilhelmscream = wilhelmscream_raw.select(
+    F.col("Title").cast("string").alias("title"),
+    F.col("Year").cast("bigint").alias("year"),
+    F.col("Media Type").cast("string").alias("media_type"),
+    F.col("IMDb ID").cast("string").alias("imdb_id"),
+    F.col("IMDb Rating").cast("double").alias("imdb_rating"),
+    F.col("Scream Timestamp").cast("string").alias("scream_timestamp"),
+    F.col("Scene Description").cast("string").alias("scene_description"),
+    F.col("Video URL").cast("string").alias("video_url"),
+    F.col("Entry URL").cast("string").alias("entry_url"),
+    F.col("Confirmed Votes").cast("int").alias("confirmed_votes"),
+    F.col("Disputed Votes").cast("int").alias("disputed_votes"),
+    F.col("Verification").cast("string").alias("verification"),
+)
+
+wilhelmscream.write.mode("overwrite").parquet(f"{curated}/wilhelmscream/")
+
+add_dq("wilhelmscream", "rows_in", wilhelmscream_raw.count())
+add_dq("wilhelmscream", "rows_out", spark.read.parquet(f"{curated}/wilhelmscream/").count())
+add_dq("wilhelmscream", "null_movieId", wilhelmscream.filter(F.col("IMDB ID").isNull()).count())
+add_dq("wilhelmscream", "null_Title", wilhelmscream.filter(F.col("Title").isNull()).count())
 
 # --- data-quality report -------------------------------------------------------
 (

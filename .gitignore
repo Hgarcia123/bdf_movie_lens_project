@@ -6,3 +6,6 @@ data/**
 #Only preserve query_results_csv directory
 query_results_csv/**
 !query_results_csv/.gitkeep
+
+#Don't persist logs of individual runs
+scratch/
