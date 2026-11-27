@@ -215,3 +215,10 @@ FROM rank_films_by_year
 where rn_appearence = 1;
 
 -- This confirms it!
+
+SELECT
+    tag,
+    count(*)
+FROM './data/parquet/tags.parquet'
+group by tag
+order by count(*) DESC;

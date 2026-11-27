@@ -104,7 +104,7 @@ FROM exploded_genres
 GROUP BY genre
 ORDER BY movie_count DESC;
 
---Wilheml Scream used scene types
+--Wilhelm Scream used scene types
 WITH scenes_class AS (
     SELECT imdb_id,
        scene_description AS descr,
